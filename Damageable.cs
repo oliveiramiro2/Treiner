@@ -9,14 +9,18 @@ abstract class Damageable : IDamageable
 {
   protected int health = 0;
 
-  public virtual void TakeDamage(int damage)
+  protected bool isDead()
   {
     if (health <= 0)
     {
       Console.WriteLine($"{this.GetType().Name} is Dead");
-      return;
+      return true;
     }
+    return false;
+  }
 
+  public virtual void TakeDamage(int damage)
+  {
     health -= damage;
     if (health <= 0)
     {
@@ -37,6 +41,11 @@ class GoblinEnemy : Damageable
 
   public override void TakeDamage(int damage)
   {
+    if (isDead())
+    {
+      return;
+    }
+
     base.TakeDamage(damage);
   }
 }
@@ -50,43 +59,36 @@ class BossEnemy : Damageable
     health = 500;
   }
 
-  private void TakeDamageWithShield(int damage)
+  private int TakeDamageWithShield(int damage)
   {
-    if (health == 0)
-    {
-      Console.WriteLine($"{this.GetType().Name} is Dead");
-      return;
-    }
-
     if (shield > 0)
     {
       shield -= damage;
-      if (shield < 0)
+      if (shield <= 0)
       {
-        health += shield;
+        int aux = shield;
         shield = 0;
+        return Math.Abs(aux);
       }
       else
       {
         Console.WriteLine($"{this.GetType().Name} shield: {shield}");
-        return;
-      }
-
-      if (health <= 0)
-      {
-        health = 0;
-        Console.WriteLine($"{this.GetType().Name} is Dead");
-        return;
+        return 0;
       }
     }
+    return damage;
   }
 
   public override void TakeDamage(int damage)
   {
-    TakeDamageWithShield(damage);
+    if (isDead())
+    {
+      return;
+    }
 
-
-    base.TakeDamage(damage);
+    int remainingDamage = TakeDamageWithShield(damage);
+    Console.WriteLine($"remaining damage: {remainingDamage}");
+    base.TakeDamage(remainingDamage);
   }
 }
 
@@ -105,8 +107,10 @@ class Program
 
     ApplyDamage(goblin, 30);
     ApplyDamage(goblin, 80);
+    ApplyDamage(goblin, 10);
     ApplyDamage(boss, 50);
     ApplyDamage(boss, 100);
     ApplyDamage(boss, 400);
+    ApplyDamage(boss, 150);
   }
 }
