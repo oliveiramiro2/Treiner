@@ -50,7 +50,7 @@ class BossEnemy : Damageable
     health = 500;
   }
 
-  public override void TakeDamage(int damage)
+  private void TakeDamageWithShield(int damage)
   {
     if (health == 0)
     {
@@ -79,6 +79,12 @@ class BossEnemy : Damageable
         return;
       }
     }
+  }
+
+  public override void TakeDamage(int damage)
+  {
+    TakeDamageWithShield(damage);
+
 
     base.TakeDamage(damage);
   }
