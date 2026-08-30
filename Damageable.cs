@@ -86,16 +86,21 @@ class BossEnemy : Damageable
 
 class Program
 {
+  static void ApplyDamage(IDamageable damageable, int damage)
+  {
+    damageable.TakeDamage(damage);
+  }
+
   static void Main(string[] args)
   {
     GoblinEnemy goblin = new GoblinEnemy();
     BossEnemy boss = new BossEnemy();
 
 
-    goblin.TakeDamage(30);
-    goblin.TakeDamage(80);
-    boss.TakeDamage(50);
-    boss.TakeDamage(100);
-    boss.TakeDamage(400);
+    ApplyDamage(goblin, 30);
+    ApplyDamage(goblin, 80);
+    ApplyDamage(boss, 50);
+    ApplyDamage(boss, 100);
+    ApplyDamage(boss, 400);
   }
 }
