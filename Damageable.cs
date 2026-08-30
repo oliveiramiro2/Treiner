@@ -27,6 +27,12 @@ class Damageable(int initialHealth) : IDamageable
       return;
     }
 
+    if (IsDead())
+    {
+      Console.WriteLine($"{this.GetType().Name} is Dead");
+      return;
+    }
+
     health -= damage;
 
     if (health <= 0)
@@ -50,22 +56,18 @@ class BossEnemy : Damageable
 
   public BossEnemy() : base(500) { }
 
-  private bool CheckValue(int damage)
-  {
-    if (!ValidValue(damage))
-    {
-      Console.WriteLine("Damage must be greater than 0 to apply damage");
-      return false;
-    }
-    return true;
-  }
-
-
   private int TakeDamageWithShield(int damage)
   {
 
-    if (IsDead() || !CheckValue(damage))
+    if (IsDead())
     {
+      Console.WriteLine($"{this.GetType().Name} is Dead");
+      return 0;
+    }
+
+    if (!ValidValue(damage))
+    {
+      Console.WriteLine("Damage must be greater than 0 to apply damage");
       return 0;
     }
 
