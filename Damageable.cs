@@ -5,23 +5,30 @@ public interface IDamageable
   void TakeDamage(int damage);
 }
 
-abstract class Damageable : IDamageable
+class Damageable(int initialHealth) : IDamageable
 {
-  protected int health = 0;
+  private int health = initialHealth;
 
-  protected bool isDead()
+  protected bool IsDead()
   {
-    if (health <= 0)
-    {
-      Console.WriteLine($"{this.GetType().Name} is Dead");
-      return true;
-    }
-    return false;
+    return health <= 0;
+  }
+
+  protected bool ValidValue(int damage)
+  {
+    return damage > 0;
   }
 
   public virtual void TakeDamage(int damage)
   {
+    if (!ValidValue(damage))
+    {
+      Console.WriteLine("Damage must be greater than 0 to apply damage");
+      return;
+    }
+
     health -= damage;
+
     if (health <= 0)
     {
       health = 0;
@@ -34,41 +41,42 @@ abstract class Damageable : IDamageable
 
 class GoblinEnemy : Damageable
 {
-  public GoblinEnemy()
-  {
-    health = 100;
-  }
-
-  public override void TakeDamage(int damage)
-  {
-    if (isDead())
-    {
-      return;
-    }
-
-    base.TakeDamage(damage);
-  }
+  public GoblinEnemy() : base(100) { }
 }
 
 class BossEnemy : Damageable
 {
   private int shield = 100;
 
-  public BossEnemy()
+  public BossEnemy() : base(500) { }
+
+  private bool CheckValue(int damage)
   {
-    health = 500;
+    if (!ValidValue(damage))
+    {
+      Console.WriteLine("Damage must be greater than 0 to apply damage");
+      return false;
+    }
+    return true;
   }
+
 
   private int TakeDamageWithShield(int damage)
   {
+
+    if (IsDead() || !CheckValue(damage))
+    {
+      return 0;
+    }
+
     if (shield > 0)
     {
       shield -= damage;
       if (shield <= 0)
       {
-        int aux = shield;
+        int remainingShield = shield;
         shield = 0;
-        return Math.Abs(aux);
+        return Math.Abs(remainingShield);
       }
       else
       {
@@ -81,14 +89,12 @@ class BossEnemy : Damageable
 
   public override void TakeDamage(int damage)
   {
-    if (isDead())
-    {
-      return;
-    }
-
     int remainingDamage = TakeDamageWithShield(damage);
-    Console.WriteLine($"remaining damage: {remainingDamage}");
-    base.TakeDamage(remainingDamage);
+
+    if (remainingDamage > 0)
+    {
+      base.TakeDamage(remainingDamage);
+    }
   }
 }
 
@@ -104,7 +110,13 @@ class Program
     GoblinEnemy goblin = new GoblinEnemy();
     BossEnemy boss = new BossEnemy();
 
+    // invalid damage values
+    ApplyDamage(goblin, -10);
+    ApplyDamage(boss, -10);
+    ApplyDamage(goblin, 0);
+    ApplyDamage(boss, 0);
 
+    // valid damage values
     ApplyDamage(goblin, 30);
     ApplyDamage(goblin, 80);
     ApplyDamage(goblin, 10);
