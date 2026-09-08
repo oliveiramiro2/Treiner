@@ -1,0 +1,12 @@
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\bin\Debug\net10.0\CafeteriaDominio.deps.json
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\bin\Debug\net10.0\CafeteriaDominio.dll
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\bin\Debug\net10.0\CafeteriaDominio.pdb
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\obj\Debug\net10.0\CafeteriaDominio.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\obj\Debug\net10.0\CafeteriaDominio.AssemblyInfoInputs.cache
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\obj\Debug\net10.0\CafeteriaDominio.AssemblyInfo.cs
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\obj\Debug\net10.0\CafeteriaDominio.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\obj\Debug\net10.0\CafeteriaDominio.sourcelink.json
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\obj\Debug\net10.0\CafeteriaDominio.dll
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\obj\Debug\net10.0\refint\CafeteriaDominio.dll
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\obj\Debug\net10.0\CafeteriaDominio.pdb
+C:\Users\Lenovo\Desktop\org\code\Treiner\DotnetExample\CafeteriaDominio\obj\Debug\net10.0\ref\CafeteriaDominio.dll

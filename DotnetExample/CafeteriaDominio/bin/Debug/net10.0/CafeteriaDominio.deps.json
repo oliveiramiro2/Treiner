@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "CafeteriaDominio/1.0.0": {
+        "runtime": {
+          "CafeteriaDominio.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CafeteriaDominio/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
