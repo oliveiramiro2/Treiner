@@ -1,3 +1,7 @@
+#:package FluentAssertions@8.10.0
+#:package xunit@2.9.3
+#:package xunit.runner.visualstudio@4.0.0
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
