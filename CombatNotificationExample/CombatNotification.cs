@@ -5,7 +5,6 @@ public interface EntityHealth
   int CurrentHealth { get; }
   int MaxHealth { get; }
   event Action<int, int> OnHealthChanged;
-  public void TakeDamage(int damage);
 }
 
 public class Entity : EntityHealth
@@ -21,13 +20,16 @@ public class Entity : EntityHealth
 
   public Entity(int maxHealth)
   {
+    if (maxHealth <= 0)
+      throw new ArgumentOutOfRangeException(nameof(maxHealth));
+
     this.maxHealth = maxHealth;
     currentHealth = maxHealth;
   }
 
   public void TakeDamage(int damage)
   {
-    if (IsDead)
+    if (IsDead || damage <= 0)
     {
       return;
     }
@@ -50,66 +52,86 @@ public class Boss2(int maxHealth) : Entity(maxHealth)
 {
 }
 
+public class HealthNotificationSystem
+{
+  private readonly Dictionary<EntityHealth, List<Action<EntityHealth, int, int>>> subscribers = new();
+  private readonly Dictionary<EntityHealth, Action<int, int>> handlers = new();
+
+  public void Subscribe(
+      EntityHealth entity,
+      Action<EntityHealth, int, int> callback)
+  {
+    if (!subscribers.TryGetValue(entity, out var callbacks))
+    {
+      callbacks = new List<Action<EntityHealth, int, int>>();
+      subscribers.Add(entity, callbacks);
+
+      Action<int, int> handler = (current, max) => NotifySubscribers(entity, current, max);
+      handlers.Add(entity, handler);
+      entity.OnHealthChanged += handler;
+    }
+
+    callbacks.Add(callback);
+  }
+
+  public void Unsubscribe(
+      EntityHealth entity,
+      Action<EntityHealth, int, int> callback)
+  {
+    if (!subscribers.TryGetValue(entity, out var callbacks))
+      return;
+
+    callbacks.Remove(callback);
+
+    if (callbacks.Count == 0)
+    {
+      if (handlers.TryGetValue(entity, out var handler))
+      {
+        entity.OnHealthChanged -= handler;
+        handlers.Remove(entity);
+      }
+      subscribers.Remove(entity);
+    }
+  }
+
+  private void NotifySubscribers(EntityHealth entity, int currentHealth, int maxHealth)
+  {
+    if (subscribers.TryGetValue(entity, out var callbacks))
+    {
+      var snapshot = callbacks.ToArray();
+
+      foreach (var callback in snapshot)
+      {
+        callback(entity, currentHealth, maxHealth);
+      }
+    }
+  }
+}
+
 public class HUD
 {
-  EntityHealth entity;
 
-  public HUD(EntityHealth entity)
-  {
-    this.entity = entity;
-    Subscribe();
-  }
-
-  public void Subscribe()
-  {
-    entity.OnHealthChanged += UpdateHealthBar;
-  }
-
-  public void Unsubscribe()
-  {
-    entity.OnHealthChanged -= UpdateHealthBar;
-  }
-
-  private void UpdateHealthBar(int currentHealth, int maxHealth)
+  public void UpdateHealthBar(EntityHealth entity, int currentHealth, int maxHealth)
   {
     if (currentHealth <= 0)
     {
-      Console.WriteLine($"Entity is Dead");
-      Unsubscribe();
+      Console.WriteLine($"{entity.GetType().Name} is Dead");
       return;
     }
-    Console.WriteLine($"Health: {currentHealth}/{maxHealth}");
+    Console.WriteLine($"{entity.GetType().Name} - Health: {currentHealth}/{maxHealth}");
   }
 }
 
 public class AudioSystem
 {
-  EntityHealth entity;
 
-  public AudioSystem(EntityHealth entity)
-  {
-    this.entity = entity;
-    Subscribe();
-  }
-
-  public void Subscribe()
-  {
-    entity.OnHealthChanged += PlayDamageSound;
-  }
-
-  public void Unsubscribe()
-  {
-    entity.OnHealthChanged -= PlayDamageSound;
-  }
-
-  private void PlayDamageSound(int currentHealth, int maxHealth)
+  public void PlayDamageSound(EntityHealth entity, int currentHealth, int maxHealth)
   {
     if (currentHealth <= 0)
     {
-      Unsubscribe();
       return;
     }
-    Console.WriteLine($"Playing damage sound");
+    Console.WriteLine($"{entity.GetType().Name} - Playing damage sound");
   }
 }
 
@@ -120,14 +142,18 @@ public class Game
     Entity boss1 = new Boss1(500);
     Entity boss2 = new Boss2(300);
 
-    HUD hud = new HUD(boss1);
-    AudioSystem audioSystem = new AudioSystem(boss2);
+    HealthNotificationSystem notificationSystem = new HealthNotificationSystem();
+    HUD hud = new HUD();
+    AudioSystem audioSystem = new AudioSystem();
+
+    notificationSystem.Subscribe(boss1, hud.UpdateHealthBar);
+    notificationSystem.Subscribe(boss2, hud.UpdateHealthBar);
+    notificationSystem.Subscribe(boss1, audioSystem.PlayDamageSound);
 
     boss1.TakeDamage(100);
     boss1.TakeDamage(200);
     boss1.TakeDamage(250);
     boss1.TakeDamage(50);
-
 
     boss2.TakeDamage(50);
     boss2.TakeDamage(200);
