@@ -3,20 +3,20 @@ using System.Threading;
 
 public class LevelLoader
 {
-  public void LoadLevel(string levelName, Action onLevelLoading, Action onLevelLoaded)
+  public void LoadLevel(string levelName, Action onLevelLoading, Action<string> onLevelLoaded)
   {
     onLevelLoading?.Invoke();
     Thread.Sleep(1000);
-    Console.WriteLine($"Loaded level: {levelName}");
-    onLevelLoaded?.Invoke();
+    onLevelLoaded?.Invoke(levelName);
   }
 }
 
 public class HUD
 {
-  public void ShowHUD()
+  public void ShowHUD(string levelName)
   {
     Console.WriteLine("HUD is now visible.");
+    Console.WriteLine($"level: {levelName}");
   }
 
   public void ShowLoadingScreen()
