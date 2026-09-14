@@ -1,13 +1,13 @@
 using System;
 
-public interface EntityHealth
+public interface IEntityHealth
 {
   int CurrentHealth { get; }
   int MaxHealth { get; }
   event Action<int, int> OnHealthChanged;
 }
 
-public class Entity : EntityHealth
+public class Entity : IEntityHealth
 {
   private int currentHealth;
   private int maxHealth;
@@ -54,16 +54,16 @@ public class Boss2(int maxHealth) : Entity(maxHealth)
 
 public class HealthNotificationSystem
 {
-  private readonly Dictionary<EntityHealth, List<Action<EntityHealth, int, int>>> subscribers = new();
-  private readonly Dictionary<EntityHealth, Action<int, int>> handlers = new();
+  private readonly Dictionary<IEntityHealth, List<Action<IEntityHealth, int, int>>> subscribers = new();
+  private readonly Dictionary<IEntityHealth, Action<int, int>> handlers = new();
 
   public void Subscribe(
-      EntityHealth entity,
-      Action<EntityHealth, int, int> callback)
+      IEntityHealth entity,
+      Action<IEntityHealth, int, int> callback)
   {
     if (!subscribers.TryGetValue(entity, out var callbacks))
     {
-      callbacks = new List<Action<EntityHealth, int, int>>();
+      callbacks = new List<Action<IEntityHealth, int, int>>();
       subscribers.Add(entity, callbacks);
 
       Action<int, int> handler = (current, max) => NotifySubscribers(entity, current, max);
@@ -75,8 +75,8 @@ public class HealthNotificationSystem
   }
 
   public void Unsubscribe(
-      EntityHealth entity,
-      Action<EntityHealth, int, int> callback)
+      IEntityHealth entity,
+      Action<IEntityHealth, int, int> callback)
   {
     if (!subscribers.TryGetValue(entity, out var callbacks))
       return;
@@ -94,7 +94,7 @@ public class HealthNotificationSystem
     }
   }
 
-  private void NotifySubscribers(EntityHealth entity, int currentHealth, int maxHealth)
+  private void NotifySubscribers(IEntityHealth entity, int currentHealth, int maxHealth)
   {
     if (subscribers.TryGetValue(entity, out var callbacks))
     {
@@ -111,7 +111,7 @@ public class HealthNotificationSystem
 public class HUD
 {
 
-  public void UpdateHealthBar(EntityHealth entity, int currentHealth, int maxHealth)
+  public void UpdateHealthBar(IEntityHealth entity, int currentHealth, int maxHealth)
   {
     if (currentHealth <= 0)
     {
@@ -125,7 +125,7 @@ public class HUD
 public class AudioSystem
 {
 
-  public void PlayDamageSound(EntityHealth entity, int currentHealth, int maxHealth)
+  public void PlayDamageSound(IEntityHealth entity, int currentHealth, int maxHealth)
   {
     if (currentHealth <= 0)
     {
