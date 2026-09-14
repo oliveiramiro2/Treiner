@@ -40,16 +40,6 @@ public class HUD
 
 public class Game
 {
-  private static bool CanLoadLevel(Level level)
-  {
-    return level switch
-    {
-      Level.Forest => true,
-      Level.Cave => false,
-      Level.Bridge => true,
-      _ => false
-    };
-  }
 
   public static void Main()
   {
@@ -57,7 +47,29 @@ public class Game
     HUD hud = new HUD();
 
 
-    levelLoader.LoadLevel(Level.Cave, Game.CanLoadLevel, hud.ShowLoadingScreen, hud.ShowHUD); // can't load level
-    levelLoader.LoadLevel(Level.Forest, Game.CanLoadLevel, hud.ShowLoadingScreen, hud.ShowHUD); // can load level
+    levelLoader.LoadLevel(Level.Cave, 
+    (level) =>
+    {
+      return level switch
+      {
+        Level.Forest => true,
+        _ => false
+      };
+    }, 
+    hud.ShowLoadingScreen, 
+    hud.ShowHUD); // can't load level
+
+
+    levelLoader.LoadLevel(Level.Forest, 
+    (level) => 
+      {
+        return level switch
+        {
+          Level.Forest => true,
+          _ => false
+        };
+      },
+    hud.ShowLoadingScreen, 
+    hud.ShowHUD); // can load level
   }
 }
