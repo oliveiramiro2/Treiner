@@ -123,10 +123,10 @@ public class EnemyGoblin
   private BehaviorExecutor behaviorExecutor;
   private DecisionMaker decisionMaker;
 
-  public EnemyGoblin(float distance, int life)
+  public EnemyGoblin(BehaviorExecutor behaviorExecutor, DecisionMaker decisionMaker)
   {
-    decisionMaker = new DecisionMaker(distance, life);
-    behaviorExecutor = new BehaviorExecutor(decisionMaker.DecideBehavior());
+    this.behaviorExecutor = behaviorExecutor;
+    this.decisionMaker = decisionMaker;
   }
 
   public void Update(float distance, int life)
@@ -141,21 +141,38 @@ public class EnemyGoblin
   }
 }
 
+public class EnemyFactory
+{
+  public EnemyGoblin CreateEnemyGoblin(float distance, int life)
+  {
+    DecisionMaker decisionMaker = new DecisionMaker(distance, life);
+    BehaviorExecutor behaviorExecutor = new BehaviorExecutor(decisionMaker.DecideBehavior());
+    return new EnemyGoblin(behaviorExecutor, decisionMaker);
+  }
+}
+
 public class Game
 {
   public static void Main()
   {
-    EnemyGoblin goblin = new EnemyGoblin(10f, 30);
-    goblin.PerformAction(); // Initial behavior based on distance and life
+    EnemyFactory factory = new EnemyFactory();
+    EnemyGoblin goblin1 = factory.CreateEnemyGoblin(10f, 30);
+    EnemyGoblin goblin2 = factory.CreateEnemyGoblin(15f, 25);
 
-    // Simulate changes in distance and life
-    goblin.Update(3f, 15); // Close distance and low life
-    goblin.PerformAction(); // Should trigger flee behavior
+    goblin1.PerformAction(); // Initial action based on distance and life
+    goblin2.PerformAction(); // Initial action based on distance and life
 
-    goblin.Update(12f, 25); // Medium distance and moderate life
-    goblin.PerformAction(); // Should trigger chase behavior
+    // Simulate game updates
+    goblin1.Update(3f, 10); // Update with new distance and life
+    goblin1.PerformAction(); // Perform action after update
 
-    goblin.Update(20f, 50); // Far distance and high life
-    goblin.PerformAction(); // Should trigger patrol behavior
+    goblin2.Update(12f, 15); // Update with new distance and life
+    goblin2.PerformAction(); // Perform action after update
+
+    goblin1.Update(20f, 50); // Update with new distance and life
+    goblin1.PerformAction(); // Perform action after update
+
+    goblin2.Update(5f, 5); // Update with new distance and life
+    goblin2.PerformAction(); // Perform action after update
   }
 }
